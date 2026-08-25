@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +36,9 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionCard(
-    transaction: Transaction
+    transaction: Transaction,
+    onEdit: (Transaction) -> Unit = {},
+    onDelete: (Transaction) -> Unit = {}
 ) {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
     val color = if (transaction.type.name == "INCOME") {
@@ -57,7 +63,6 @@ fun TransactionCard(
     ) {
         Column(
             modifier = Modifier
-                .height(70.dp)
                 .padding(8.dp)
         ) {
             Row(
@@ -80,11 +85,40 @@ fun TransactionCard(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                transaction.description,
-                style = MaterialTheme.typography.bodyLarge,
-                fontStyle = FontStyle.Italic
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    transaction.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontStyle = FontStyle.Italic,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                Row {
+                    IconButton(
+                        onClick = { onEdit(transaction) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Editar transação",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(
+                        onClick = { onDelete(transaction) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Apagar transação",
+                            tint = Color.Red
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ class FakeTransactionRepository : TransactionRepository {
             ),
             TransactionType.INCOME
         ),
-        Transaction(""
+        Transaction(
             2,
             "Supermercado",
             25.01,

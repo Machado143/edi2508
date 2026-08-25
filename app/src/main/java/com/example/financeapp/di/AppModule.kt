@@ -2,8 +2,10 @@ package com.example.financeapp.di
 
 import com.example.financeapp.data.repository.FakeTransactionRepository
 import com.example.financeapp.domain.repository.TransactionRepository
+import com.example.financeapp.domain.usecase.DeleteTransactionUseCase
 import com.example.financeapp.domain.usecase.GetTransactionsUseCase
 import com.example.financeapp.domain.usecase.InsertTransactionsUseCase
+import com.example.financeapp.domain.usecase.UpdateTransactionUseCase
 import com.example.financeapp.ui.screens.home.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -24,8 +26,16 @@ val appModule = module {
         InsertTransactionsUseCase(get())
     }
 
+    factory {
+        UpdateTransactionUseCase(get())
+    }
+
+    factory {
+        DeleteTransactionUseCase(get())
+    }
+
     //ViewModel
     viewModel {
-        HomeViewModel(get(), get())
+        HomeViewModel(get(), get(), get(), get())
     }
 }

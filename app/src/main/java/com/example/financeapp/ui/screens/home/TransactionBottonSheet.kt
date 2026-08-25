@@ -28,29 +28,49 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.financeapp.domain.model.Transaction
+import com.example.financeapp.domain.model.TransactionType
 import com.example.financeapp.ui.components.DatePickerDialogComponent
 import com.example.financeapp.ui.components.DateTimeField
 import com.example.financeapp.ui.components.TimePickerDialogComponent
 import com.example.financeapp.utils.formatCurrency
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionBottonSheet(
+    transactionToEdit: Transaction? = null,
     onDismiss: () -> Unit,
-    onSave: (String, Double, LocalDateTime,  Boolean) -> Unit
+    onSave: (String, Double, LocalDateTime, Boolean) -> Unit
 ) {
-    var description by remember() { mutableStateOf("") }
-    var amountField by remember { mutableStateOf(TextFieldValue("")) }
-    var amount by remember() { mutableStateOf("") }
-    var isIncome by remember() { mutableStateOf(true) }
+    val isEditing = transactionToEdit != null
+
+    var description by remember { mutableStateOf(transactionToEdit?.description ?: "") }
+    var amount by remember {
+        mutableStateOf(
+            transactionToEdit?.let {
+                String.format(Locale.US, "%.0f", it.amount * 100)
+            } ?: ""
+        )
+    }
+    var amountField by remember {
+        mutableStateOf(
+            TextFieldValue(
+                transactionToEdit?.let { formatCurrency(amount) } ?: ""
+            )
+        )
+    }
+    var isIncome by remember {
+        mutableStateOf(transactionToEdit?.type != TransactionType.EXPENSE)
+    }
 
     var descriptionError by remember { mutableStateOf(false) }
     var amountError by remember { mutableStateOf(false) }
 
-    var dateTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var dateTime by remember { mutableStateOf(transactionToEdit?.date ?: LocalDateTime.now()) }
     var formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm")
 
     var showDatePiccker by remember { mutableStateOf(false) }
@@ -65,7 +85,10 @@ fun TransactionBottonSheet(
                 .padding(16.dp)
         )
         {
-            Text("Nova transação", style = MaterialTheme.typography.titleLarge)
+            Text(
+                if (isEditing) "Editar transação" else "Nova transação",
+                style = MaterialTheme.typography.titleLarge
+            )
             Spacer(modifier = Modifier.height(16.dp))
             DateTimeField(
                 dateTime = dateTime.format(formatter),
@@ -162,7 +185,7 @@ fun TransactionBottonSheet(
                 }
             )
             {
-                Text("Salvar")
+                Text(if (isEditing) "Atualizar" else "Salvar")
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
