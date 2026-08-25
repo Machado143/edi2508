@@ -1,0 +1,4 @@
+- [x] Fix balance display in `SummarySection.kt`
+- [x] Fix typos in labels in `SummarySection.kt`
+- [x] Fix typo in `HomeViewModel.kt` constructor and usage
+- [x] Verify changes
